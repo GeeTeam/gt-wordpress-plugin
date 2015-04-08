@@ -6,7 +6,6 @@
   }
   //print_r($this->options);
 ?>
-
 <div class="wrap">
    <a name="geetest"></a>
    <h2>极验设置</h2>   

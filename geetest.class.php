@@ -7,11 +7,11 @@ if(!class_exists("Geetest")){
 		private $plugin_directory;
 
 		function start_plugin(){
-            $this->plugin_directory = basename(dirname(__FILE__));
-            $this->register_default_options() ;
-            // register the hooks
-            $this->register_actions();
-            $this->register_filters();
+                            $this->plugin_directory = basename(dirname(__FILE__));
+                            $this->register_default_options() ;
+                            // register the hooks
+                            $this->register_actions();
+                            $this->register_filters();
 		}
 
 		function register_actions() {
@@ -343,4 +343,3 @@ POST;
     }
 }
 ?>
-

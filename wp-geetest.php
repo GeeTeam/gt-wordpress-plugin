@@ -33,7 +33,4 @@ if(class_exists("Geetest")){
 	$geetest_plugin = new Geetest();
 	$geetest_plugin->start_plugin();
 }
-
-
-
 ?>
