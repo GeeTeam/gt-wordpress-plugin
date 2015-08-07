@@ -3,13 +3,14 @@ require_once('geetestlib.php');
 if(!class_exists("Geetest")){
     
 	class Geetest{
-		private $options;
-		private $plugin_directory;
+		public $options;
+		public $plugin_directory;
 
 		function start_plugin(){
                             $this->plugin_directory = basename(dirname(__FILE__));
                             $this->register_default_options() ;
                             // register the hooks
+                            // $this->options = get_option('geetest_options');
                             $this->register_actions();
                             $this->register_filters();
 		}
@@ -26,13 +27,13 @@ if(!class_exists("Geetest")){
             // add_action('admin_head', array($this, 'register_stylesheets')); // make unnecessary: shouldn't require styling in the options page
             
             if ($this->options['show_in_login']){
-                add_action('login_head', array($this, 'login_geetest_style')); //修改验证码样式
+                add_action('login_head', array($this, 'add_geetest_lib')); //加载geetest核心库
                 add_action('login_form', array($this, 'show_geetest_in_login'));
             }
 
             // only register the hooks if the user wants geetest on the registration page
             if ($this->options['show_in_registration']) {
-                add_action('register_head', array($this, 'register_geetest_style')); //修改验证码样式
+                add_action('register_head', array($this, 'add_geetest_lib')); //加载geetest核心库
                 //在新用户注册表结尾部分前执行此动作函数。 geetest form display
                 add_action('register_form', array($this, 'show_geetest_in_registration'));
             }
@@ -40,6 +41,8 @@ if(!class_exists("Geetest")){
             // only register the hooks if the user wants geetest on the comments page
             if ($this->options['show_in_comments']) {
                 //在标准WordPress主题中执行此动作函数以插入评论表单。函数接收的参数：日志ID。
+                add_action('get_header', array($this, 'add_geetest_lib'));   //加载geetest核心库            
+
                 add_action('comment_form', array($this, 'show_geetest_in_comments'));               
             }
 
@@ -89,6 +92,9 @@ if(!class_exists("Geetest")){
                $option_defaults['show_in_comments'] = $old_options['show_in_comments']; // whether or not to show GeeTest on the comment post
                $option_defaults['show_in_login'] = $old_options['show_in_login']; // whether or not to show GeeTest on the registration page
                $option_defaults['show_in_registration'] = $old_options['show_in_registration']; // whether or not to show GeeTest on the registration page            
+               $option_defaults['lang_options'] = $old_options['lang_options']; // whether or not to show GeeTest on the registration page            
+               $option_defaults['http_options'] = $old_options['http_options']; // whether or not to show GeeTest on the registration page            
+           
             }else {
                // keys
                $option_defaults['public_key'] = ''; // the public key for GeeTest
@@ -98,11 +104,15 @@ if(!class_exists("Geetest")){
                $option_defaults['show_in_comments'] = "1"; // whether or not to show GeeTest on the comment post
                $option_defaults['show_in_login'] = "1";
                $option_defaults['show_in_registration'] = "1"; // whether or not to show GeeTest on the registration page
+               $option_defaults['lang_options'] = "0"; // whether or not to show GeeTest on the registration page
+               $option_defaults['http_options'] = "0"; // whether or not to show GeeTest on the registration page
 
               // add the option based on what environment we're in
                add_option("geetest_options", $option_defaults);
             }
-            $this->options = $option_defaults;         
+            $this->options = $option_defaults;
+
+            file_put_contents(dirname(__FILE__) .'/config.php', "<?php return " .var_export($this->options,true) . "?>");
         }
         //停止插件   回调函数
         function uninstall(){
@@ -116,53 +126,35 @@ if(!class_exists("Geetest")){
             $path = $this->plugin_directory . '/geetest.css';
             echo '<link rel="stylesheet" type="text/css" href="' . $path . '" />';
         }  
-        // stylesheet information
-        // todo: this 'hack' isn't nice, try to figure out a workaround
-        function login_geetest_style() {
-           $style = <<<STYLE
-              <style>
-                 .gt_holder{
-                    margin-bottom: 20px;
-                   }
-                  
-                  t_info .gt_info_tip {
-                    height: 12px;
-                    width: 216px;
-                    background-position: 0 -443px;
-                  }
-                  .gt_info {
-                    margin-top: 9px;
-                  }
-              </style>
-STYLE;
-           echo $style;
-        }
-        function register_geetest_style() {
-           $style = <<<STYLE
-              <style>
-                 .gt_holder{
-                    margin-bottom: 20px;
-                   }
-              </style>
+
+        function add_geetest_lib() {
+            $style = <<<STYLE
+            <script src="http://api.geetest.com/get.php"></script>
+            <script id="testScript" src="./wp-content/plugins/geetest/gt_core.js"></script>
 STYLE;
            echo $style;
 
         }
+        // stylesheet information
+        // todo: this 'hack' isn't nice, try to figure out a workaround
+
 
         //===========================显示login验证回调函数====================================
         // display geetest
-        function show_geetest_in_login($errors) {
-            $geetestlib = new geetestlib();
-            if ($geetestlib->register($this->options['public_key'])) {
-                echo $geetestlib->geetest_get_html($this->options['public_key']);
+        function show_geetest_in_login() {
+            $output = '<div id="gt_login" style="margin-bottom: 14px;"><script>';
+            if ($this->options['lang_options'] == '1') {
+                $output.='getCaptcha("#gt_login","en");';
+            }else if($this->options['lang_options'] == '0') {
+                $output.='getCaptcha("#gt_login","zh-cn");';
             }
+            $output.='</script></div>';
+            echo $output;
         }
         // //处理验证
         function validate_geetest_login($user) {
             // empty so throw the empty response error
             $geetestlib = new geetestlib();
-
-            
             $response = $geetestlib->geetest_check_answer($this->options['private_key'], $_POST['geetest_challenge'], $_POST['geetest_validate'], $_POST['geetest_seccode']);
             if (!$response) {
                return  new WP_Error('broke', __("验证未通过"));         
@@ -174,11 +166,14 @@ STYLE;
         //===========================显示registration验证回调函数====================================
         // display geetest
         function show_geetest_in_registration($errors) {
-            $geetestlib = new geetestlib();
-            if ($geetestlib->register($this->options['public_key'])) {
-                echo $geetestlib->geetest_get_html($this->options['public_key']);
+            $output = '<div id="gt_register" style="margin-bottom: 14px;"><script>';
+            if ($this->options['lang_options'] == '1') {
+                $output.='getCaptcha("#gt_register","en");';
+            }else if($this->options['lang_options'] == '0') {
+                $output.='getCaptcha("#gt_register","zh-cn");';
             }
-            
+            $output.='</script></div>';
+            echo $output;
         }
         //处理验证
         function validate_geetest_register($errors) {
@@ -197,7 +192,7 @@ STYLE;
         //用于前端点击提交，判断验证不通过提示
         function show_geetest_in_comments() {
             //modify the comment form for the GeeTest widget
-            $geetest_js_opts = <<<OPTS
+            $output = <<<html
             <script type='text/javascript'>
                 var geetest_result = 0;
                 function gt_custom_ajax(res) {                        
@@ -214,35 +209,32 @@ STYLE;
                 var forms = document.getElementsByTagName('form');
                 for(i=0;i<forms.length;i++) {
                     var form = forms[i];
-
                     var a = form.attributes['action'];
                     var action = a.value;
                     if(action.indexOf('wp-comments-post.php') != -1){
                         form.onsubmit = gt_check_submit;
                         break;
                     }
-
                 }
-
-                
             </script>
-OPTS;
-            
-            $position_geetest = <<<POST
+html;
+            $options = '<div id="gt_reply" style="margin-bottom: 14px;"><script>';
+            if ($this->options['lang_options'] == '1') {
+                $options.='getCaptcha("#gt_reply","en");';
+            }else if($this->options['lang_options'] == '0') {
+                $options.='getCaptcha("#gt_reply","zh-cn");';
+            }
+            $options.='</script></div>';
+
+            $js = <<<JS
                 <script type='text/javascript'>
                     //将验证码显示在submit，提交按钮前面
                     var comment_submit = document.getElementById('submit');
-                    var gt_holder = document.getElementById('geetest_unique_id');
+                    var gt_holder = document.getElementById('gt_reply');
                     comment_submit.parentNode.insertBefore(gt_holder,comment_submit);
-                    gt_holder.style.marginTop = "20px";
-                    gt_holder.style.marginBottom = "40px";
                 </script>
-
-POST;
-            $geetestlib = new geetestlib();
-            if ($geetestlib->register($this->options['public_key'])) {
-                echo $geetest_js_opts.$geetestlib->geetest_get_html($this->options['public_key']).$position_geetest;
-            }
+JS;
+        echo $output . $options . $js;
         }
         
       
@@ -251,7 +243,7 @@ POST;
         //判断验证   保存评论
         function validate_geetest_comment($comment_data) {
             // do not check trackbacks/pingbacks
-            if ($comment_data['comment_type'] == '') {
+            if ($comment_data['user_ID'] != '1') {
                 $challenge = $_POST['geetest_challenge'];
                 $validate = $_POST['geetest_validate'];
                 $seccode = $_POST['geetest_seccode'];    
@@ -262,8 +254,8 @@ POST;
                 if ($geetest_response) {                        
                     return $comment_data;
                 } else {    
-                    // http://codex.wordpress.org/Plugin_API/Filter_Reference#Database_Writes_2
-                    add_filter('pre_comment_approved', 'is_comment_approved','99',2);
+                    // add_filter('pre_comment_approved', array($this,'is_comment_approved'),'99',2);
+                    wp_die("滑动验证未通过");
                 }
             }
              return $comment_data;
@@ -312,6 +304,8 @@ POST;
             $validated['show_in_comments'] = ($input['show_in_comments'] == "1" ? "1" : "0");
             $validated['show_in_login'] = ($input['show_in_login'] == "1" ? "1" : "0");
             $validated['show_in_registration'] = ($input['show_in_registration'] == "1" ? "1" : "0");
+            $validated['lang_options'] = ($input['lang_options'] == "1" ? "1" : "0");
+            $validated['http_options'] = ($input['http_options'] == "1" ? "1" : "0");
            
             
             return $validated;

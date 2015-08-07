@@ -1,6 +1,6 @@
 <?php
 define('GT_API_SERVER', 'http://api.geetest.com');
-define('GT_SDK_VERSION', 'php_2.15.4.1.1');
+define('GT_SDK_VERSION', 'wordpress_1.0');
 
 class geetestlib{
   function __construct() {
@@ -8,11 +8,37 @@ class geetestlib{
   }
 
   function register($pubkey) {
-    $this->challenge = $this->_send_request("/register.php", array("gt"=>$pubkey));
+    $config = include dirname(__FILE__) . '/config.php';
+    if ($config['http_options'] == '1') {
+      $api = "https://api.geetest.com/";
+    }else if ($config['http_options'] == '0') {
+      $api = "http://api.geetest.com/";
+    }
+    $url = $api . 'register.php?gt=' . $pubkey;
+    $this->challenge = $this->send_request($url);
     if (strlen($this->challenge) != 32) {
       return 0;
     }
     return 1;
+  }
+  private function send_request($url){
+        if(function_exists('curl_exec')){
+      $ch = curl_init();
+      curl_setopt ($ch, CURLOPT_URL, $url);
+      curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+      $data = curl_exec($ch);
+      curl_close($ch);
+    }else{
+      $opts = array(
+          'http'=>array(
+            'method'=>"GET",
+            'timeout'=>2,
+            ) 
+          );
+      $context = stream_context_create($opts);
+      $data = file_get_contents($url, false, $context);
+    }
+    return $data;
   }
 
   /**
@@ -62,22 +88,6 @@ class geetestlib{
 
       return FALSE;
   }
-
-  function _send_request($path, $data, $method="GET") {
-    if ($method=="GET") {
-      $opts = array(
-          'http'=>array(
-            'method'=>"GET",
-            'timeout'=>2,
-          )
-        );
-        $context = stream_context_create($opts);
-      $response = file_get_contents(GT_API_SERVER.$path."?".http_build_query($data), false, $context);
-
-    }
-    return $response;
-  }
-
 
   function _http_post($host, $path, $data, $port = 80) {
       $http_request  = "POST $path HTTP/1.0\r\n";
