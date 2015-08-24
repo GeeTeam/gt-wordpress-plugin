@@ -3,7 +3,6 @@ require_once dirname(__FILE__) . '/geetestlib.php';
 $config = include dirname(__FILE__) . '/config.php';
 $GtSdk = new geetestLib();
 session_start();
-$_SESSION['gtsdk'] = $GtSdk;
 $return = $GtSdk->register($config['public_key']);
 if ($return) {
     $_SESSION['gtserver'] = 1;

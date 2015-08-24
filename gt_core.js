@@ -1,4 +1,4 @@
-var getCaptcha = function (data_ele,data_lang) {
+var getCaptcha = function (data_ele,data_lang,data_http) {
     var xmlHttp; 
 function createxmlHttpRequest() { 
     if (window.ActiveXObject) { 
@@ -31,15 +31,6 @@ var check = function (obj) {
             }, 1000);
         }
 };
-// $.ajax({
-//         url : "./plugin/geetest/gt_check_server.php?rand="+Math.round(Math.random()*100),
-//         type : "get",
-//         dataType : 'JSON',
-//         success : function(result) {
-//             console.log(result);
-//             gtcallback(result)
-//         }
-//     })
 
 var loadGeetest = function(config) {
     //1. use geetest capthca
@@ -48,23 +39,17 @@ var loadGeetest = function(config) {
         challenge : config.challenge,
         product : 'float',
         lang : data_lang,
+        https : data_http,
         offline : !config.success
     });
-    // if (data_style == "popup" || data_btn != "") {
-    //     gt_captcha_obj.appendTo(data_ele).bindOn(data_btn);
-    //     // if (typeof sFun === 'function') {
-    //     //     gt_captcha_obj.onSuccess (sFun);
-    //     // }
-    // }else{
         gt_captcha_obj.appendTo(data_ele);
-    // }
 }
 var gtFailbackFrontInitial = function(result) {
     var gt_failback = document.createElement('script');
-gt_failback.id = 'gt_lib';
-gt_failback.src = 'https://static.geetest.com/static/js/geetest.0.0.0.js';
-gt_failback.charset = 'UTF-8';
-gt_failback.type = 'text/javascript';
+    gt_failback.id = 'gt_lib';
+    gt_failback.src = 'https://static.geetest.com/static/js/geetest.0.0.0.js';
+    gt_failback.charset = 'UTF-8';
+    gt_failback.type = 'text/javascript';
     document.getElementsByTagName('head')[0].appendChild(gt_failback);
     var loaded = false;
     gt_failback.onload = gt_failback.onreadystatechange = function() {

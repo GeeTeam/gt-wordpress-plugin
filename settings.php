@@ -4,7 +4,6 @@
        echo "checked";
     }
   }
-  print_r($this->options);
 ?>
 <div class="wrap">
    <a name="geetest"></a>
