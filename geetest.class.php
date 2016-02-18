@@ -126,25 +126,24 @@ if(!class_exists("Geetest")){
             $path = $this->plugin_directory . '/geetest.css';
             echo '<link rel="stylesheet" type="text/css" href="' . $path . '" />';
         }  
-        function add_captcha($ele_id){
-            $output = '<div id="'.$ele_id.'" style="margin-bottom: 14px;"><script type="text/javascript">';
-            if ($this->options['lang_options'] == '1') {
-                if ($this->options['http_options'] == '1') {
-                    $js ='getCaptcha("#'.$ele_id.'","en","true");';
-                }else if($this->options['http_options'] == '0') {
-                    $js ='getCaptcha("#'.$ele_id.'","en","false");';
-                }
-            }else if($this->options['lang_options'] == '0') {
-                if ($this->options['http_options'] == '1') {
-                    $js ='getCaptcha("#'.$ele_id.'","zh-cn","true");';
-                }else if($this->options['http_options'] == '0') {
-                    $js ='getCaptcha("#'.$ele_id.'","zh-cn","false");';
-                }
-            }
-            $string =$js . '</script></div>';
-
-            return $output.$string;
-        }
+        // function add_captcha($ele_id){
+        //     $output = '<div id="'.$ele_id.'" style="margin-bottom: 14px;"><script type="text/javascript">';
+        //     if ($this->options['lang_options'] == '1') {
+        //         if ($this->options['http_options'] == '1') {
+        //             $output.='getCaptcha("#'.$ele_id.'","en","true");';
+        //         }else if($this->options['http_options'] == '0') {
+        //             $output.='getCaptcha("#'.$ele_id.'","en","false");';
+        //         }
+        //     }else if($this->options['lang_options'] == '0') {
+        //         if ($this->options['http_options'] == '1') {
+        //             $output.='getCaptcha("#'.$ele_id.'","zh-cn","true");';
+        //         }else if($this->options['http_options'] == '0') {
+        //             $output.='getCaptcha("#'.$ele_id.'","zh-cn","false");';
+        //         }
+        //     }
+        //     $output.='</script></div>';
+        //     return $output;
+        // }
 
             // <script src="http://static.geetest.com/static/tools/gt.js"></script>
         function add_geetest_lib() {
@@ -162,7 +161,24 @@ STYLE;
         //===========================显示login验证回调函数====================================
         // display geetest
         function show_geetest_in_login() {
-            echo $this->add_captcha("gt_login");
+            $ele_id = 'gt_login';
+            $output = '<div id="'.$ele_id.'" style="margin-bottom: 14px;"><script type="text/javascript">';
+            if ($this->options['lang_options'] == '1') {
+                if ($this->options['http_options'] == '1') {
+                    $output.='getCaptcha("#'.$ele_id.'","en","true");';
+                }else if($this->options['http_options'] == '0') {
+                    $output.='getCaptcha("#'.$ele_id.'","en","false");';
+                }
+            }else if($this->options['lang_options'] == '0') {
+                if ($this->options['http_options'] == '1') {
+                    $output.='getCaptcha("#'.$ele_id.'","zh-cn","true");';
+                }else if($this->options['http_options'] == '0') {
+                    $output.='getCaptcha("#'.$ele_id.'","zh-cn","false");';
+                }
+            }
+            $output.='</script></div>';
+            echo $output;
+            // echo $this->add_captcha("gt_login");
         }
         //处理验证
         function validate_geetest_login($user) {
