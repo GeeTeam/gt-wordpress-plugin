@@ -130,19 +130,20 @@ if(!class_exists("Geetest")){
             $output = '<div id="'.$ele_id.'" style="margin-bottom: 14px;"><script type="text/javascript">';
             if ($this->options['lang_options'] == '1') {
                 if ($this->options['http_options'] == '1') {
-                    $output.='getCaptcha("#'.$ele_id.'","en","true");';
+                    $js ='getCaptcha("#'.$ele_id.'","en","true");';
                 }else if($this->options['http_options'] == '0') {
-                    $output.='getCaptcha("#'.$ele_id.'","en","false");';
+                    $js ='getCaptcha("#'.$ele_id.'","en","false");';
                 }
             }else if($this->options['lang_options'] == '0') {
                 if ($this->options['http_options'] == '1') {
-                    $output.='getCaptcha("#'.$ele_id.'","zh-cn","true");';
+                    $js ='getCaptcha("#'.$ele_id.'","zh-cn","true");';
                 }else if($this->options['http_options'] == '0') {
-                    $output.='getCaptcha("#'.$ele_id.'","zh-cn","false");';
+                    $js ='getCaptcha("#'.$ele_id.'","zh-cn","false");';
                 }
             }
-            $output.='</script></div>';
-            return $output;
+            $string =$js . '</script></div>';
+
+            return $output.$string;
         }
 
             // <script src="http://static.geetest.com/static/tools/gt.js"></script>
