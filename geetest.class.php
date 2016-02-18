@@ -161,21 +161,22 @@ STYLE;
         //===========================显示login验证回调函数====================================
         // display geetest
         function show_geetest_in_login() {
-            $ele_id = 'gt_login';
-            $output = '<div id="'.$ele_id.'" style="margin-bottom: 14px;"><script type="text/javascript">';
+            // $ele_id = 'gt_login';
             if ($this->options['lang_options'] == '1') {
                 if ($this->options['http_options'] == '1') {
-                    $output.='getCaptcha("#'.$ele_id.'","en","true");';
+                    $js='getCaptcha("#gt_login","en","true");';
                 }else if($this->options['http_options'] == '0') {
-                    $output.='getCaptcha("#'.$ele_id.'","en","false");';
+                    $js='getCaptcha("#gt_login","en","false");';
                 }
             }else if($this->options['lang_options'] == '0') {
                 if ($this->options['http_options'] == '1') {
-                    $output.='getCaptcha("#'.$ele_id.'","zh-cn","true");';
+                    $js='getCaptcha("#gt_login","zh-cn","true");';
                 }else if($this->options['http_options'] == '0') {
-                    $output.='getCaptcha("#'.$ele_id.'","zh-cn","false");';
+                    $js='getCaptcha("#gt_login","zh-cn","false");';
                 }
             }
+            $output = '<div id="gt_login" style="margin-bottom: 14px;"><script type="text/javascript">';
+            $output.=$js;
             $output.='</script></div>';
             echo $output;
             // echo $this->add_captcha("gt_login");
