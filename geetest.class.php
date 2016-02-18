@@ -127,7 +127,7 @@ if(!class_exists("Geetest")){
             echo '<link rel="stylesheet" type="text/css" href="' . $path . '" />';
         }  
         function add_captcha($ele_id){
-            $output = '<div id="'.$ele_id.'" style="margin-bottom: 14px;"><script>';
+            $output = '<div id="'.$ele_id.'" style="margin-bottom: 14px;"><script type="text/javascript">';
             if ($this->options['lang_options'] == '1') {
                 if ($this->options['http_options'] == '1') {
                     $output.='getCaptcha("#'.$ele_id.'","en","true");';
@@ -145,6 +145,7 @@ if(!class_exists("Geetest")){
             return $output;
         }
 
+            // <script src="http://static.geetest.com/static/tools/gt.js"></script>
         function add_geetest_lib() {
             $style = <<<STYLE
             <script src="http://api.geetest.com/get.php"></script>
