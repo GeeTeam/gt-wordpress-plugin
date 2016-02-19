@@ -1,12 +1,11 @@
 <?php
 require_once('geetestlib.php');
+session_start();
 if(!class_exists("Geetest")){
-    
-	class Geetest{
-                	public $options;
-                	public $plugin_directory;
-                	function start_plugin(){
-                                        session_start();
+    class Geetest{
+                    public $options;
+                    public $plugin_directory;
+                    function start_plugin(){
                                         $this->plugin_directory = basename(dirname(__FILE__));
                                         $this->register_default_options() ;
                                         // register the hooks
@@ -79,15 +78,21 @@ if(!class_exists("Geetest")){
         }
         //==========================插件若是第一次运行  保存参数=================================
         // set the default options
-        function register_default_options() {           
+        function register_default_options() {          
             $option_defaults = array();
             //从option表中获取参数   
             $old_options = get_option("geetest_options");
            
             if ($old_options) {
+
                $option_defaults['public_key'] = $old_options['public_key']; // the public key for GeeTest
                $option_defaults['private_key'] = $old_options['private_key']; // the private key for GeeTest
 
+                $post_data = array('captchaid' => $option_defaults['public_key'], 'privatekey' => $option_defaults['private_key'],'token'=>md5('discuz' . (string)time()));
+                $geetestlib = new geetestlib();
+                $result_pc = $geetestlib->send_post("http://account.geetest.com/api/discuz/get", $post_data);
+                $result = json_decode($result_pc,true);
+                $option_defaults['challenge'] = $result['challenge'];
                // placement
                $option_defaults['show_in_comments'] = $old_options['show_in_comments']; // whether or not to show GeeTest on the comment post
                $option_defaults['show_in_login'] = $old_options['show_in_login']; // whether or not to show GeeTest on the registration page
@@ -126,24 +131,24 @@ if(!class_exists("Geetest")){
             $path = $this->plugin_directory . '/geetest.css';
             echo '<link rel="stylesheet" type="text/css" href="' . $path . '" />';
         }  
-        // function add_captcha($ele_id){
-        //     $output = '<div id="'.$ele_id.'" style="margin-bottom: 14px;"><script type="text/javascript">';
-        //     if ($this->options['lang_options'] == '1') {
-        //         if ($this->options['http_options'] == '1') {
-        //             $output.='getCaptcha("#'.$ele_id.'","en","true");';
-        //         }else if($this->options['http_options'] == '0') {
-        //             $output.='getCaptcha("#'.$ele_id.'","en","false");';
-        //         }
-        //     }else if($this->options['lang_options'] == '0') {
-        //         if ($this->options['http_options'] == '1') {
-        //             $output.='getCaptcha("#'.$ele_id.'","zh-cn","true");';
-        //         }else if($this->options['http_options'] == '0') {
-        //             $output.='getCaptcha("#'.$ele_id.'","zh-cn","false");';
-        //         }
-        //     }
-        //     $output.='</script></div>';
-        //     return $output;
-        // }
+        function add_captcha($ele_id){
+            $output = '<div id="'.$ele_id.'" style="margin-bottom: 14px;"><script>';
+            if ($this->options['lang_options'] == '1') {
+                if ($this->options['http_options'] == '1') {
+                    $output.='getCaptcha("#'.$ele_id.'","en","true");';
+                }else if($this->options['http_options'] == '0') {
+                    $output.='getCaptcha("#'.$ele_id.'","en","false");';
+                }
+            }else if($this->options['lang_options'] == '0') {
+                if ($this->options['http_options'] == '1') {
+                    $output.='getCaptcha("#'.$ele_id.'","zh-cn","true");';
+                }else if($this->options['http_options'] == '0') {
+                    $output.='getCaptcha("#'.$ele_id.'","zh-cn","false");';
+                }
+            }
+            $output.='</script></div>';
+            return $output;
+        }
 
             // <script src="http://static.geetest.com/static/tools/gt.js"></script>
         function add_geetest_lib() {
@@ -161,25 +166,7 @@ STYLE;
         //===========================显示login验证回调函数====================================
         // display geetest
         function show_geetest_in_login() {
-            // $ele_id = 'gt_login';
-            if ($this->options['lang_options'] == '1') {
-                if ($this->options['http_options'] == '1') {
-                    $js='getCaptcha("#gt_login","en","true");';
-                }else if($this->options['http_options'] == '0') {
-                    $js='getCaptcha("#gt_login","en","false");';
-                }
-            }else if($this->options['lang_options'] == '0') {
-                if ($this->options['http_options'] == '1') {
-                    $js='getCaptcha("#gt_login","zh-cn","true");';
-                }else if($this->options['http_options'] == '0') {
-                    $js='getCaptcha("#gt_login","zh-cn","false");';
-                }
-            }
-            $output = '<div id="gt_login" style="margin-bottom: 14px;"><script type="text/javascript">';
-            $output.=$js;
-            $output.='</script></div>';
-            echo $output;
-            // echo $this->add_captcha("gt_login");
+            echo $this->add_captcha("gt_login");
         }
         //处理验证
         function validate_geetest_login($user) {
