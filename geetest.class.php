@@ -26,13 +26,11 @@ if(!class_exists("Geetest")){
                     // add_action('admin_head', array($this, 'register_stylesheets')); // make unnecessary: shouldn't require styling in the options page
                     
                     if ($this->options['show_in_login']){
-                        add_action('wp_head', array($this, 'add_geetest_lib')); //加载geetest核心库
                         add_action('login_form', array($this, 'show_geetest_in_login'));
                     }
 
                     // only register the hooks if the user wants geetest on the registration page
                     if ($this->options['show_in_registration']) {
-                        add_action('wp_head', array($this, 'add_geetest_lib')); //加载geetest核心库
                         //在新用户注册表结尾部分前执行此动作函数。 geetest form display
                         add_action('register_form', array($this, 'show_geetest_in_registration'));
                     }
@@ -40,8 +38,6 @@ if(!class_exists("Geetest")){
                     // only register the hooks if the user wants geetest on the comments page
                     if ($this->options['show_in_comments']) {
                         //在标准WordPress主题中执行此动作函数以插入评论表单。函数接收的参数：日志ID。
-                        add_action('wp_head', array($this, 'add_geetest_lib'));   //加载geetest核心库            
-
                         add_action('comment_form', array($this, 'show_geetest_in_comments'));               
                     }
 
@@ -165,7 +161,7 @@ STYLE;
         //===========================显示login验证回调函数====================================
         // display geetest
         function show_geetest_in_login() {
-            echo $this->add_captcha("gt_login");
+            echo $this->add_geetest_lib().$this->add_captcha("gt_login");
         }
         //处理验证
         function validate_geetest_login($user) {
@@ -188,7 +184,7 @@ STYLE;
         //===========================显示registration验证回调函数====================================
         // display geetest
         function show_geetest_in_registration($errors) {
-            echo $this->add_captcha("gt_register");
+            echo $this->add_geetest_lib().$this->add_captcha("gt_register");
         }
 
         //处理验证
@@ -252,7 +248,7 @@ html;
                     comment_submit.parentNode.insertBefore(gt_holder,comment_submit);
                 </script>
 JS;
-        echo $output . $options . $js;
+        echo $add_geetest_lib().$output . $options . $js;
         }
         
       
