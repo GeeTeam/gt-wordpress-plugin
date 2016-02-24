@@ -26,13 +26,13 @@ if(!class_exists("Geetest")){
                     // add_action('admin_head', array($this, 'register_stylesheets')); // make unnecessary: shouldn't require styling in the options page
                     
                     if ($this->options['show_in_login']){
-                        add_action('login_head', array($this, 'add_geetest_lib')); //加载geetest核心库
+                        add_action('wp_head', array($this, 'add_geetest_lib')); //加载geetest核心库
                         add_action('login_form', array($this, 'show_geetest_in_login'));
                     }
 
                     // only register the hooks if the user wants geetest on the registration page
                     if ($this->options['show_in_registration']) {
-                        add_action('register_head', array($this, 'add_geetest_lib')); //加载geetest核心库
+                        add_action('wp_head', array($this, 'add_geetest_lib')); //加载geetest核心库
                         //在新用户注册表结尾部分前执行此动作函数。 geetest form display
                         add_action('register_form', array($this, 'show_geetest_in_registration'));
                     }
@@ -40,7 +40,7 @@ if(!class_exists("Geetest")){
                     // only register the hooks if the user wants geetest on the comments page
                     if ($this->options['show_in_comments']) {
                         //在标准WordPress主题中执行此动作函数以插入评论表单。函数接收的参数：日志ID。
-                        add_action('get_header', array($this, 'add_geetest_lib'));   //加载geetest核心库            
+                        add_action('wp_head', array($this, 'add_geetest_lib'));   //加载geetest核心库            
 
                         add_action('comment_form', array($this, 'show_geetest_in_comments'));               
                     }
