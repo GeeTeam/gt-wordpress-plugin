@@ -7,7 +7,6 @@ function createxmlHttpRequest() {
         xmlHttp=new XMLHttpRequest(); 
     } 
 }
-// var ele = "#" + data_ele;
 createxmlHttpRequest(); 
 xmlHttp.open("GET","./wp-content/plugins/geetest/gt_check_server.php?rand="+Math.round(Math.random()*100)); 
 xmlHttp.send(null); 

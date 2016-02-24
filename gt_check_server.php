@@ -6,14 +6,15 @@ session_start();
 $return = $GtSdk->register($config['public_key']);
 if ($return) {
     $_SESSION['gtserver'] = 1;
-    if ($config['challenge'] == 1) {
+    if ($config['register'] == 1) {
+
         $challenge = md5($GtSdk->challenge.$config['private_key']);
         $result = array(
                 'success' => 1,
                 'gt' => $config['public_key'],
                 'challenge' => $challenge
             );
-    }else if ($config['challenge'] == 0){
+    }else if ($config['register'] == 0){
         $result = array(
                 'success' => 1,
                 'gt' => $config['public_key'],

@@ -92,7 +92,7 @@ if(!class_exists("Geetest")){
                 $geetestlib = new geetestlib();
                 $result_pc = $geetestlib->send_post("http://account.geetest.com/api/discuz/get", $post_data);
                 $result = json_decode($result_pc,true);
-                $option_defaults['challenge'] = $result['challenge'];
+                $option_defaults['register'] = $result['register'];
                // placement
                $option_defaults['show_in_comments'] = $old_options['show_in_comments']; // whether or not to show GeeTest on the comment post
                $option_defaults['show_in_login'] = $old_options['show_in_login']; // whether or not to show GeeTest on the registration page
@@ -150,7 +150,6 @@ if(!class_exists("Geetest")){
             return $output;
         }
 
-            // <script src="http://static.geetest.com/static/tools/gt.js"></script>
         function add_geetest_lib() {
             $style = <<<STYLE
             <script src="http://api.geetest.com/get.php"></script>
