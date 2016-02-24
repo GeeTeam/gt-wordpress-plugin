@@ -248,7 +248,7 @@ html;
                     comment_submit.parentNode.insertBefore(gt_holder,comment_submit);
                 </script>
 JS;
-        echo $add_geetest_lib().$output . $options . $js;
+        echo $this->add_geetest_lib().$output . $options . $js;
         }
         
       
