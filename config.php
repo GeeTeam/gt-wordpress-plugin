@@ -5,6 +5,5 @@
   'show_in_comments' => '1',
   'show_in_login' => '1',
   'show_in_registration' => '1',
-  'lang_options' => '0',
-  'http_options' => '0',
+  'lang_options' => '1',
 )?>

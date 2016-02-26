@@ -16,10 +16,42 @@ class geetestlib{
     }
     $url = $api . 'register.php?gt=' . $pubkey;
     $this->challenge = $this->send_request($url);
-    if (strlen($this->challenge) != 32) {
-      return 0;
-    }
-    return 1;
+    // if (strlen($this->challenge) != 32) {
+    //   return 0;
+    // }
+    // return 1;
+    return $this->challenge;
+  }
+
+    function get_widget($captchaid,$is_md5,$privatekey,$button,$lang_options) {
+      #加密
+      if ($is_md5 == 1) {
+          $challenge = md5($this->register($captchaid).$privatekey);
+      #未加密
+      }elseif ($is_md5 == 0) {
+          $challenge = $this->register($captchaid);
+      }
+      if ($lang_options == 1) {
+        $lang = "en";
+      }else {
+        $lang = "zh-cn";
+      }
+
+
+      $output = '<script type="text/javascript">';
+      $output.= 'var handler = function (captchaObj) {captchaObj.appendTo("#';
+      $output.= $button;
+      $output.= '");};';
+      $output.= "\r\n";
+      $output.= 'initGeetest({gt:"';
+      $output.= $captchaid;
+      $output.= '",challenge:"';
+      $output.= $challenge;
+      $output.= '",lang:"';
+      $output.= $lang;
+      $output.='",product:"float",}, handler);';
+      $output.='</script>';                    
+    return $output;
   }
 
   private function send_request($url){

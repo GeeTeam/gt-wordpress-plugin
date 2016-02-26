@@ -68,16 +68,6 @@
             </td>
          </tr>
       </table>
-      <h3>开启https</h3>
-      <table class="form-table">
-         <tr valign="top">
-            <th scope="row">开启</th>
-            <td>
-               <input type="checkbox" id ="geetest_options[http_options]" name="geetest_options[http_options]" value="1" <?php _checked($this->options['http_options']); ?> />
-               <label for="geetest_options[http_options]">开启https(不选中则http)</label>
-            </td>
-         </tr>
-      </table>
       <p class="submit"><input type="submit" class="button-primary" title="保存更改" value="保存更改 &raquo;" /></p>
    </form>
    
