@@ -13,9 +13,9 @@ class geetestlib{
     $url = $api . 'register.php?gt=' . $pubkey;
     $this->challenge = $this->send_request($url);
     if (strlen($this->challenge) == 32) {
-      $_SESSION['gtserver'] = 0;
-    }else{
       $_SESSION['gtserver'] = 1;
+    }else{
+      $_SESSION['gtserver'] = 0;
     }
     return $this->challenge;
   }
