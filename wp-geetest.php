@@ -3,7 +3,7 @@
 Plugin Name: 极验验证
 Plugin URI: http://www.geetest.com/
 Description: 极验验证是全球首家新一代行为式验证™技术服务提供商，为给互联网世界的人们带去“更安全、更便捷、更具智慧的验证”为目标而不断前行。极验验证首度提出“行为式验证”的全新验证理论，并构建出“行为沙盒”的验证框架，利用自主研发的“多重行为判别智能算法”，达到了令传统验证技术难以到达的高度，至此开创验证安全2.0新时代。
-Version:  5.3.1
+Version:  5.3.2
 Author: 极验验证
 Email: tanxu@geetest.com
 Author URI: http://www.geetest.com/
