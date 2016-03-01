@@ -9,17 +9,9 @@ class geetestlib{
 
   function register($pubkey) {
     $config = include dirname(__FILE__) . '/config.php';
-    if ($config['http_options'] == '1') {
-      $api = "https://api.geetest.com/";
-    }else if ($config['http_options'] == '0') {
-      $api = "http://api.geetest.com/";
-    }
+    $api = "https://api.geetest.com/";
     $url = $api . 'register.php?gt=' . $pubkey;
     $this->challenge = $this->send_request($url);
-    // if (strlen($this->challenge) != 32) {
-    //   return 0;
-    // }
-    // return 1;
     return $this->challenge;
   }
 
